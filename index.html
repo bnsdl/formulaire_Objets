@@ -3,57 +3,116 @@
 <head>
   <meta charset="utf-8">
   <title>Formulaire avec objets</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" >
+
 </head>
 <body>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <form id="formulaire">
+          <legend>Ajouter un utilisateur</legend>
+        <div class="form-group">
+          <label for="champNom">Nom: </label>
+          <input class="form-control" id="champNom"></input>
+        </div>
+        <div class="form-group">
+          <label for="champPrenom">Prenom: </label>
+          <input class="form-control" id="champPrenom"></input>
+        </div>
+        <div>
+          <button class="btn btn-primary" type="button" onclick="userManager.addUser()">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <ul id="maListe"></ul>
+    </div>
+  </div>
+</div>
 
-  <form id="formulaire">
-    <input id="champNom"></input>
-    <label for="champNom">Nom</label>
-    <input id="champPrenom"></input>
-    <label for="champPrenom">Prenom</label>
-    <button type="button" onclick="recup()">Submit</button>
-  </form>
-  <ul id="maListe"></ul>
+  <style>
+  html {
+    box-sizing: border-box;
+  }
 
-  <script>
-    var liste = document.getElementById('maListe');
-    var li;
-    var nouvellediv;
-    var compteur = 0;
-    var tabContact = [];
+  *, *:after, *:before {
+    box-sizing: inherit;
+  }
 
-    function suppr(a, b){
-      var idLi = document.getElementById("li"+a);
-      // console.log("li"+a);
-      idLi.parentNode.removeChild(idLi);
-      b.parentNode.removeChild(b);
-      // console.log(liste);
-      tabContact.splice(a,1);
-      // console.log("a : " + a );
-      // console.log(tabContact);
+  form {
+    margin: 10px auto;
+    width: 300px;
+    border: 1px solid #CCC;
+  }
+
+  .btn-primary{
+    margin: 5px 15px;
+  }
+
+  .btn-warning {
+    margin-left: 10px;
+  }
+
+  .form-group{
+    padding: 0 1em ;
+
+  }
+
+  legend {
+    background: lightgrey;
+    padding: 10px;
+  }
+
+  ul {
+    margin-top: 10px;
+  }
+
+
+  </style>
+  <script type="text/javascript">
+
+    var champN = document.getElementById("champNom");
+    var champP = document.getElementById("champPrenom");
+    var liste = document.getElementById("maListe");
+    var users = [];
+
+    var userManager = {
+      addUser: function(){
+        var user = {
+          prenom: champP.value,
+          nom: champN.value,
+        }
+        users.push(user);
+        // console.log(users);
+        champP.value = "";
+        champN.value = "";
+        refreshView();
+      },
+      removeUser: function(event){
+        // console.log("event " + event.target.info, "index " + users.indexOf(event.target.info));
+        users.splice(users.indexOf(event.target.info), 1);
+        refreshView();
+      }
     }
 
-    function recup(){
-      var prenom = document.getElementById('champPrenom');
-      var nom = document.getElementById("champNom");
-      var monObjet = {};
-      li = document.createElement('li');
-      liste.appendChild(li);
-      li.id = "li"+compteur;
-      //  console.log("compteur : "+compteur + "id li : "+ li.id);
-      nouvellediv = document.createElement('div');
-      nouvellediv.innerHTML="<button type='button'onclick='suppr("+compteur+", this)'>supprimer</button>";
-      liste.appendChild(nouvellediv);
-      compteur ++;
-      monObjet.nom = nom.value;
-      monObjet.prenom = prenom.value;
-      tabContact.push(monObjet);
-      // console.log(tabContact);
-      li.textContent = monObjet.nom + ' ' + monObjet.prenom;
-      nom.value = " ";
-      prenom.value = " ";
+    function refreshView(){
+      liste.innerHTML = "";
+      users.map(function(item){
+        var li = document.createElement("li");
+        var btn = document.createElement('button');
+        btn.textContent = "X";
+        btn.classList.add('btn', 'btn-warning')
+        btn.addEventListener('click', userManager.removeUser);
+        var content = document.createTextNode(item.prenom + " " + item.nom);
+        btn.info = item;
+        li.appendChild(content);
+        li.appendChild(btn);
+        return li;
+      }).forEach(function(liElement){
+        liste.appendChild(liElement);
+      });
     }
+
 
   </script>
-</body>
-</html>
